@@ -65,16 +65,3 @@ Gonvival – เอาชีวิตรอดไปกับ G
 FXGL: https://entwickler.de/java/fxgl-tutorial 
         https://github.com/AlmasB/FXGL/wiki/FXGL-11
         https://dykstrom.github.io/mazela-man-web/04_animation/
-YouTube
-RyiSnow
-How to Make a 2D Game in Java #1 - The Mechanism of 2D Games
-ภาพ
-entwickler.de
-"FXGL-Tutorial"
-Die Agenda dieses Tutorials zu FXGL ist nicht gerade schmal: Nachdem es zu Beginn um Grundlagen geht und ein einfaches Spiel erstellt wird, werden wir im weiteren Verlauf Bild- und Soundeffekte, Sprite-Animationen und mit Java FX-Kollisionen hinzufügen. Zu guter Letzt werden wir mit FXGL einen simplen Pong- sowie einen ebensolchen Breakout-Klon ...
-"FXGL-Tutorial"
-GitHub
-FXGL 11
-Java / JavaFX / Kotlin Game Library (Engine). Contribute to AlmasB/FXGL development by creating an account on GitHub.
-FXGL 11
-04. Animation - Mazela-Man FXGL Tutorial
