@@ -17,9 +17,40 @@ public class App extends GameApplication {
         launch(args);
     }
 
+    private Entity player,enemy;
+
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(600);
-        settings.setHeight(600);
+        settings.setWidth(800);
+        settings.setHeight(800);
+        settings.setTitle("Gonvival");
+        settings.setVersion("beta");
+    }
+
+    @Override
+    protected void initGame(){
+        player = FXGL.entityBuilder()
+                    .at(400,400)
+                    .view(new Rectangle(25,25,Color.BLUE))
+                    .buildAndAttach();
+    }
+
+    @Override
+    protected void initInput(){
+        FXGL.onKey(KeyCode.A, () -> {
+            player.translateX(-2);
+        });
+
+        FXGL.onKey(KeyCode.D, () -> {
+            player.translateX(2);
+        });
+
+        FXGL.onKey(KeyCode.W, () -> {
+            player.translateY(-2);
+        });
+
+        FXGL.onKey(KeyCode.S, () -> {
+            player.translateY(2);
+        });
     }
 }
