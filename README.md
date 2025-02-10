@@ -78,3 +78,4 @@ Gonvival – เอาชีวิตรอดไปกับ G
 FXGL: https://entwickler.de/java/fxgl-tutorial 
         https://github.com/AlmasB/FXGL/wiki/FXGL-11
         https://dykstrom.github.io/mazela-man-web/04_animation/
+        https://www.youtube.com/watch?v=VLMHkyRXjxI&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp
