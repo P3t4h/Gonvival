@@ -6,16 +6,17 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -24,7 +25,7 @@ public class App extends GameApplication {
         launch(args);
     }
 
-    private Entity player;
+    private static Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -63,6 +64,10 @@ public class App extends GameApplication {
                     .buildAndAttach();
     }
 
+    public static Entity getPlayer(){
+        return player;
+    }
+
     @Override
     protected void initPhysics(){
         PhysicsWorld physicsworld = FXGL.getPhysicsWorld();
@@ -85,7 +90,11 @@ public class App extends GameApplication {
         input.addAction(new UserAction("Shoot") {
             @Override
             protected void onActionBegin(){
-                FXGL.getGameWorld().spawn("Bullet", input.getMouseXUI(), FXGL.getAppHeight() - 30);
+                Point2D mousePos = new Point2D(input.getMouseXWorld(), input.getMouseYWorld());
+                Point2D direction = mousePos.subtract(player.getPosition()).normalize();
+
+                Entity bullet = FXGL.getGameWorld().spawn("Bullet", player.getX(), player.getY());
+                bullet.addComponent(new ProjectileComponent(direction, 500));
             }
         }, MouseButton.PRIMARY);
 
