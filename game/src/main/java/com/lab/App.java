@@ -17,6 +17,7 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -31,7 +32,7 @@ public class App extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setHeight(800);
         settings.setTitle("Gonvival");
         settings.setVersion("beta");
         settings.setMainMenuEnabled(true);
@@ -46,6 +47,7 @@ public class App extends GameApplication {
     @Override
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new UnitFactory());
+        FXGL.getGameWorld().addEntities(BackGround.createBackground());
 
         FXGL.run(() -> {
 
