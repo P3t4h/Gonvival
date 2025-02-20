@@ -65,9 +65,11 @@ public class App extends GameApplication {
         player = FXGL.entityBuilder()
                 .at(400, 400)
                 .type(EntityType.PLAYER)
-                .viewWithBBox("g.png")
                 .with(new CollidableComponent(true))
+                .with(new AnimationComponent())
                 .buildAndAttach();
+
+        FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
     public static Entity getPlayer() {
@@ -104,7 +106,12 @@ public class App extends GameApplication {
 
     @Override
     protected void initInput() {
+        if(player == null){
+            return;
+        }
+
         Input input = FXGL.getInput();
+        AnimationComponent anim = player.getComponentOptional(AnimationComponent.class).orElse(null);
 
         input.addAction(new UserAction("SHOOT") {
             @Override
@@ -118,19 +125,31 @@ public class App extends GameApplication {
         }, MouseButton.PRIMARY);
 
         FXGL.onKey(KeyCode.A, "MOVE LEFT", () -> {
-            player.translateX(-2);
+            if (player != null) {
+                player.translateX(-2);
+                if (anim != null) anim.setSpeed(-1, 0);
+            }
         });
-
+    
         FXGL.onKey(KeyCode.D, "MOVE RIGHT", () -> {
-            player.translateX(2);
+            if (player != null) {
+                player.translateX(2);
+                if (anim != null) anim.setSpeed(1, 0);
+            }
         });
-
+    
         FXGL.onKey(KeyCode.W, "MOVE UP", () -> {
-            player.translateY(-2);
+            if (player != null) {
+                player.translateY(-2);
+                if (anim != null) anim.setSpeed(0, -1);
+            }
         });
-
+    
         FXGL.onKey(KeyCode.S, "MOVE DOWN", () -> {
-            player.translateY(2);
+            if (player != null) {
+                player.translateY(2);
+                if (anim != null) anim.setSpeed(0, 1);
+            }
         });
     }
 
