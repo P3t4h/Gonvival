@@ -22,7 +22,7 @@ public class AnimationComponent extends Component{
     private AnimationChannel animWalkUpRight, animWalkUpLeft, animWalkDownLeft, animWalkDownRight;
 
     public AnimationComponent() {
-        animIdle = new AnimationChannel(FXGL.image("idle.png"), 9, 48, 64, Duration.seconds(1), 0, 8);
+        animIdle = new AnimationChannel(FXGL.image("idle.png"), 9, 48, 64, Duration.seconds(1), 0, 7);
 
         animWalkLeft = new AnimationChannel(FXGL.image("walk_left_down.png"), 8, 48, 64, Duration.seconds(0.5), 0, 7);
         animWalkRight = new AnimationChannel(FXGL.image("walk_right_down.png"), 8, 48, 64, Duration.seconds(0.5), 0, 7);
