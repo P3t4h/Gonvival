@@ -11,7 +11,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
 
 import javafx.geometry.Point2D;
@@ -67,6 +69,7 @@ public class App extends GameApplication {
                 .type(EntityType.PLAYER)
                 .with(new CollidableComponent(true))
                 .with(new AnimationComponent())
+                .bbox(new HitBox(BoundingShape.box(24, 32)))
                 .buildAndAttach();
 
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
@@ -106,7 +109,7 @@ public class App extends GameApplication {
 
     @Override
     protected void initInput() {
-        if(player == null){
+        if(player == null){ //เช็คว่าplayerเป็นnullไหม
             return;
         }
 
@@ -124,33 +127,69 @@ public class App extends GameApplication {
             }
         }, MouseButton.PRIMARY);
 
-        FXGL.onKey(KeyCode.A, "MOVE LEFT", () -> {
-            if (player != null) {
-                player.translateX(-2);
+        input.addAction(new UserAction("MOVE LEFT") {
+            @Override
+            protected void onAction() {
+                player.translateX(-1);
                 if (anim != null) anim.setSpeed(-1, 0);
             }
-        });
-    
-        FXGL.onKey(KeyCode.D, "MOVE RIGHT", () -> {
-            if (player != null) {
-                player.translateX(2);
-                if (anim != null) anim.setSpeed(1, 0);
+
+            @Override
+            protected void onActionEnd() {
+                if (anim != null) anim.setSpeed(0, 0);
             }
-        });
+        }, KeyCode.A);
     
-        FXGL.onKey(KeyCode.W, "MOVE UP", () -> {
-            if (player != null) {
-                player.translateY(-2);
-                if (anim != null) anim.setSpeed(0, -1);
+        input.addAction(new UserAction("MOVE RIGHT") {
+            @Override
+            protected void onAction() {
+                player.translateX(1);
+                if (anim != null) {
+                    anim.setSpeed(1, 0);
+                }
             }
-        });
-    
-        FXGL.onKey(KeyCode.S, "MOVE DOWN", () -> {
-            if (player != null) {
-                player.translateY(2);
-                if (anim != null) anim.setSpeed(0, 1);
+
+            @Override
+            protected void onActionEnd() {
+                if (anim != null) {
+                    anim.setSpeed(0, 0);
+                }
             }
-        });
+        }, KeyCode.D);
+
+        input.addAction(new UserAction("MOVE UP") {
+            @Override
+            protected void onAction() {
+                player.translateY(-1);
+                if (anim != null) {
+                    anim.setSpeed(0, -1);
+                }
+            }
+
+            @Override
+            protected void onActionEnd() {
+                if (anim != null) {
+                    anim.setSpeed(0, 0);
+                }
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("MOVE DOWN") {
+            @Override
+            protected void onAction() {
+                player.translateY(1);
+                if (anim != null) {
+                    anim.setSpeed(0, 1);
+                }
+            }
+
+            @Override
+            protected void onActionEnd() {
+                if(anim != null) {
+                    anim.setSpeed(0, 0);
+                }
+            }
+        }, KeyCode.S);
     }
 
     @Override
