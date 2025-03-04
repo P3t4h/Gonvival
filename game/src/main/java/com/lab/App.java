@@ -24,6 +24,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.app.scene.FXGLMenu;
+
 public class App extends GameApplication {
     public static void main(String[] args) {
         launch(args);
