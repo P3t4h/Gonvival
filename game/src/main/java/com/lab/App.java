@@ -1,5 +1,7 @@
 package com.lab;
 
+import static com.almasb.fxgl.dsl.FXGL.getInput;
+
 import java.util.Map;
 
 import com.almasb.fxgl.app.GameApplication;
@@ -66,6 +68,7 @@ public class App extends GameApplication {
             }
 
         }, Duration.seconds(1));
+        new CountdownTimer();
 
         player = FXGL.entityBuilder()
                 .at(400, 400)
