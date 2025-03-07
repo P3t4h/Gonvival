@@ -11,10 +11,10 @@ public class CountdownTimer {
     private final Text timerText = new Text();
 
     public CountdownTimer() {
-        timerText.setStyle("-fx-font-size: 36px; -fx-fill: white;");
+        timerText.setStyle("-fx-font-size: 36px; -fx-fill: Black;");
         timerText.textProperty().bind(timeLeft.asString());
-        timerText.setTranslateX(50);
-        timerText.setTranslateY(50);
+        timerText.setTranslateX(400);
+        timerText.setTranslateY(60);
 
         FXGL.getGameScene().addUINode(timerText);
 

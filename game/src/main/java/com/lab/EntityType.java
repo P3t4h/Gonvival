@@ -1,5 +1,5 @@
 package com.lab;
 
 public enum EntityType {
-    BULLET, ENEMY, PLAYER;
+    BULLET, ENEMY, PLAYER, WALL;
 }

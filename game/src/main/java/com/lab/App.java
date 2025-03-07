@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -23,6 +24,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -34,7 +37,7 @@ public class App extends GameApplication {
         launch(args);
     }
 
-    private static Entity player;
+    private static Entity player,wall;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -49,12 +52,17 @@ public class App extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("enemies", 0);
         vars.put("playerHP", 100);
+        vars.put("exp",0);
     }
 
     @Override
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new UnitFactory());
         FXGL.getGameWorld().addEntities(BackGround.createBackground());
+
+        int mapWidth = 800;
+        int mapHeight = 800;
+        int wallThickness = 25;
 
         FXGL.run(() -> {
 
@@ -68,7 +76,13 @@ public class App extends GameApplication {
             }
 
         }, Duration.seconds(1));
+
         new CountdownTimer();
+
+        FXGL.spawn("Wall",new SpawnData(0, 0).put("width",mapWidth).put("height", wallThickness));
+        FXGL.spawn("Wall",new SpawnData(0, mapHeight - wallThickness).put("width",mapWidth).put("height", wallThickness));
+        FXGL.spawn("Wall",new SpawnData(0, 0).put("width", wallThickness).put("height", mapHeight));
+        FXGL.spawn("Wall",new SpawnData(mapWidth - wallThickness, 0).put("width", wallThickness).put("height", mapHeight));
 
         player = FXGL.entityBuilder()
                 .at(400, 400)
@@ -96,6 +110,7 @@ public class App extends GameApplication {
                 enemy.removeFromWorld();
 
                 FXGL.getWorldProperties().increment("enemies", -1);
+                FXGL.getWorldProperties().increment("exp", 8);
             }
         });
 
@@ -108,7 +123,24 @@ public class App extends GameApplication {
                 if (FXGL.geti("playerHP") <= 0) {
                     FXGL.showMessage("Game Over", () -> FXGL.getGameController().gotoMainMenu());
                 }
+            }
+        });
 
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.WALL) {
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity wall) {
+                bullet.removeFromWorld();
+            }
+        });
+
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) {
+            @Override
+            protected void onCollisionBegin(Entity player, Entity wall) {
+                FXGL.inc("playerHP", -9999);
+
+                if (FXGL.geti("playerHP") <= 0) {
+                    FXGL.showMessage("Game Over", () -> FXGL.getGameController().gotoMainMenu());
+                }
             }
         });
     }
@@ -200,17 +232,41 @@ public class App extends GameApplication {
 
     @Override
     protected void initUI() {
+        Font uiFont = new Font("Arial", 24);
+
         Text hpLabel = new Text("HP :");
         Text hpText = new Text();
 
-        hpLabel.setTranslateX(50);
+        Text expLabel = new Text("EXP :");
+        Text expText = new Text();
+
+        hpLabel.setTranslateX(650);
         hpLabel.setTranslateY(100);
-        hpText.setTranslateX(75);
+        hpLabel.setFill(Color.RED);
+        hpLabel.setFont(uiFont);
+
+        hpText.setTranslateX(710);
         hpText.setTranslateY(100);
+        hpText.setFill(Color.RED);
+        hpText.setFont(uiFont);
+
+        expLabel.setTranslateX(650);
+        expLabel.setTranslateY(150);
+        expLabel.setFill(Color.PURPLE);
+        expLabel.setFont(uiFont);
+
+        expText.setTranslateX(720);
+        expText.setTranslateY(150);
+        expText.setFill(Color.PURPLE);
+        expText.setFont(uiFont);
 
         FXGL.getGameScene().addUINode(hpLabel);
         FXGL.getGameScene().addUINode(hpText);
 
+        FXGL.getGameScene().addUINode(expLabel);
+        FXGL.getGameScene().addUINode(expText);
+
         hpText.textProperty().bind(FXGL.getWorldProperties().intProperty("playerHP").asString());
+        expText.textProperty().bind(FXGL.getWorldProperties().intProperty("exp").asString());
     }
 }
