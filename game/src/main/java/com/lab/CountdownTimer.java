@@ -7,14 +7,14 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class CountdownTimer {
-    private IntegerProperty timeLeft = new SimpleIntegerProperty(360);
-    private final Text timerText = new Text();
+    private IntegerProperty timeLeft = new SimpleIntegerProperty(60);
+    private Text timerText = new Text();
 
     public CountdownTimer() {
-        timerText.setStyle("-fx-font-size: 36px; -fx-fill: Black;");
-        timerText.textProperty().bind(timeLeft.asString());
-        timerText.setTranslateX(400);
-        timerText.setTranslateY(60);
+        timerText.setStyle("-fx-font-size: 36px; -fx-fill: red;");
+        timerText.textProperty().bind(timeLeft.asString("Time Left: %d"));
+        timerText.setTranslateX(350);
+        timerText.setTranslateY(50);
 
         FXGL.getGameScene().addUINode(timerText);
 
@@ -22,7 +22,7 @@ public class CountdownTimer {
             if (timeLeft.get() > 0) {
                 timeLeft.set(timeLeft.get() - 1);
             } else {
-                FXGL.showMessage("Time's up!", () -> FXGL.getGameController().startNewGame());
+                FXGL.showMessage("YOU WIN!", () -> FXGL.getGameController().gotoMainMenu());
             }
         }, Duration.seconds(1));
     }

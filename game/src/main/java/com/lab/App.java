@@ -46,6 +46,7 @@ public class App extends GameApplication {
         settings.setTitle("Gonvival");
         settings.setVersion("beta");
         settings.setMainMenuEnabled(true);
+        settings.setDeveloperMenuEnabled(true);
     }
 
     @Override
@@ -89,9 +90,10 @@ public class App extends GameApplication {
                 .type(EntityType.PLAYER)
                 .with(new CollidableComponent(true))
                 .with(new AnimationComponent())
-                .bbox(new HitBox(BoundingShape.box(24, 32)))
+                .bbox(new HitBox("Main",new Point2D(-12, -16),BoundingShape.box(24, 32)))
+                .viewWithBBox(new Rectangle(24,32,Color.RED))
                 .buildAndAttach();
-
+        
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
