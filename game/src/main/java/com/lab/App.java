@@ -54,6 +54,7 @@ public class App extends GameApplication {
         vars.put("enemies", 0);
         vars.put("playerHP", 100);
         vars.put("exp",0);
+        vars.put("level", 1);
     }
 
     @Override
@@ -90,13 +91,39 @@ public class App extends GameApplication {
                 .type(EntityType.PLAYER)
                 .with(new CollidableComponent(true))
                 .with(new AnimationComponent())
-                .bbox(new HitBox("Main",new Point2D(-12, -16),BoundingShape.box(24, 32)))
-                .viewWithBBox(new Rectangle(24,32,Color.RED))
+                .bbox(new HitBox("Main",new Point2D(6, 16),BoundingShape.box(36, 32)))
                 .buildAndAttach();
         
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
+    private void checkLevelUp() {
+        int currentExp = FXGL.geti("exp");
+        int currentLevel = FXGL.geti("level");
+        int nextLevelExp = (int) (20 * Math.pow(currentLevel, 1.5));
+    
+        if (currentExp >= nextLevelExp) {
+            FXGL.getWorldProperties().increment("level", 1);
+            FXGL.getWorldProperties().setValue("exp", currentExp - nextLevelExp);
+            int newLevel = FXGL.geti("level");
+            int hpIncrease = (int) (newLevel * 4);
+            FXGL.inc("playerHP", hpIncrease);
+    
+            FXGL.showMessage("Level Up! You are now Level " + newLevel + "! HP +" + hpIncrease);
+    
+            if (newLevel % 2 == 0) {
+                FXGL.run(() -> {
+                    FXGL.getGameWorld().spawn("Enemy",
+                            FXGLMath.random(0, FXGL.getAppWidth()),
+                            FXGLMath.random(0, FXGL.getAppHeight() / 2));
+                    FXGL.getWorldProperties().increment("enemies", 1);
+                }, Duration.seconds(0.8));
+            }
+    
+            checkLevelUp();
+        }
+    }    
+    
     public static Entity getPlayer() {
         return player;
     }
@@ -113,6 +140,8 @@ public class App extends GameApplication {
 
                 FXGL.getWorldProperties().increment("enemies", -1);
                 FXGL.getWorldProperties().increment("exp", 8);
+
+                checkLevelUp();
             }
         });
 
@@ -270,5 +299,23 @@ public class App extends GameApplication {
 
         hpText.textProperty().bind(FXGL.getWorldProperties().intProperty("playerHP").asString());
         expText.textProperty().bind(FXGL.getWorldProperties().intProperty("exp").asString());
+
+        Text levelLabel = new Text("LVL :");
+        Text levelText = new Text();
+
+        levelLabel.setTranslateX(650);
+        levelLabel.setTranslateY(200);
+        levelLabel.setFill(Color.GOLD);
+        levelLabel.setFont(uiFont);
+
+        levelText.setTranslateX(710);
+        levelText.setTranslateY(200);
+        levelText.setFill(Color.GOLD);
+        levelText.setFont(uiFont);
+
+        FXGL.getGameScene().addUINode(levelLabel);
+        FXGL.getGameScene().addUINode(levelText);
+
+        levelText.textProperty().bind(FXGL.getWorldProperties().intProperty("level").asString());
     }
 }
