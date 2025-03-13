@@ -1,6 +1,13 @@
 package com.lab;
 
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getFileSystemService;
+import static com.almasb.fxgl.dsl.FXGL.getGameController;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getInput;
+import static com.almasb.fxgl.dsl.FXGL.geti;
+import static com.almasb.fxgl.dsl.FXGL.onBtnDown;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import java.util.Map;
 
@@ -17,8 +24,10 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.PhysicsWorld;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -37,7 +46,7 @@ public class App extends GameApplication {
         launch(args);
     }
 
-    private static Entity player,wall;
+    private static Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -109,8 +118,6 @@ public class App extends GameApplication {
             int hpIncrease = (int) (newLevel * 4);
             FXGL.inc("playerHP", hpIncrease);
     
-            FXGL.showMessage("Level Up! You are now Level " + newLevel + "! HP +" + hpIncrease);
-    
             if (newLevel % 2 == 0) {
                 FXGL.run(() -> {
                     FXGL.getGameWorld().spawn("Enemy",
@@ -119,10 +126,14 @@ public class App extends GameApplication {
                     FXGL.getWorldProperties().increment("enemies", 1);
                 }, Duration.seconds(0.8));
             }
-    
+
             checkLevelUp();
         }
-    }    
+    }
+
+    public int getLevel(){
+        return FXGL.geti("level");
+    }
     
     public static Entity getPlayer() {
         return player;
@@ -150,10 +161,43 @@ public class App extends GameApplication {
             protected void onCollisionBegin(Entity enemy, Entity player) {
                 FXGL.inc("playerHP", -20);
                 enemy.removeFromWorld();
+
                 FXGL.getWorldProperties().increment("enemies", -1);
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> FXGL.getGameController().gotoMainMenu());
+                    FXGL.showMessage("Game Over", () -> { 
+                        FXGL.getGameWorld().reset();
+                        FXGL.getGameController().gotoMainMenu();
+                    });
                 }
+        }
+        });
+
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOSS) {
+            @Override
+            protected void onCollisionBegin(Entity player, Entity boss) {
+                int damageBoss = -10*getLevel();
+
+                FXGL.inc("playerHP", -(damageBoss));
+                System.out.println(damageBoss);
+
+                if (FXGL.geti("playerHP") <= 0) {
+                    FXGL.showMessage("Game Over", () -> { 
+                        FXGL.getGameWorld().reset();
+                        FXGL.getGameController().gotoMainMenu();
+                    });
+                }
+            }
+        });
+
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BOSS) {
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity boss) {
+                double knockbackStr = -2*getLevel();
+
+                boss.translateX(knockbackStr);
+                bullet.removeFromWorld();
+                
+                System.out.println(knockbackStr);
             }
         });
 
@@ -170,10 +214,23 @@ public class App extends GameApplication {
                 FXGL.inc("playerHP", -9999);
 
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> FXGL.getGameController().gotoMainMenu());
+                    FXGL.showMessage("Game Over", () -> { 
+                        FXGL.getGameWorld().reset();
+                        FXGL.getGameController().gotoMainMenu();
+                    });
                 }
             }
         });
+    }
+
+    private void shootFollowArrow() {
+        Input input = FXGL.getInput();
+        Point2D mousePos = new Point2D(input.getMouseXWorld(), input.getMouseYWorld());
+
+        Point2D direction = mousePos.subtract(player.getPosition()).normalize();
+
+        Entity bullet = FXGL.getGameWorld().spawn("Bullet", player.getX(), player.getY());
+        bullet.addComponent(new ProjectileComponent(direction, 500));
     }
 
     @Override
@@ -188,11 +245,12 @@ public class App extends GameApplication {
         input.addAction(new UserAction("SHOOT") {
             @Override
             protected void onActionBegin() {
-                Point2D mousePos = new Point2D(input.getMouseXWorld(), input.getMouseYWorld());
-                Point2D direction = mousePos.subtract(player.getPosition()).normalize();
-
-                Entity bullet = FXGL.getGameWorld().spawn("Bullet", player.getX(), player.getY());
-                bullet.addComponent(new ProjectileComponent(direction, 500));
+                shootFollowArrow();
+                System.out.println("Shoot");
+            }
+            @Override
+            protected void onActionEnd() {
+                FXGL.getGameController().resumeEngine();
             }
         }, MouseButton.PRIMARY);
 

@@ -1,5 +1,6 @@
 package com.lab;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -7,7 +8,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class CountdownTimer {
-    private IntegerProperty timeLeft = new SimpleIntegerProperty(60);
+    private IntegerProperty timeLeft = new SimpleIntegerProperty(1);
     private Text timerText = new Text();
     private boolean isTimeUp = false;
 
@@ -24,7 +25,8 @@ public class CountdownTimer {
                 timeLeft.set(timeLeft.get() - 1);
             } else if (!isTimeUp) {
                 isTimeUp = true;
-                FXGL.showMessage("Game Over!", () -> FXGL.getGameController().gotoMainMenu());
+                FXGL.getGameWorld().spawn("Boss",100,400);
+                FXGL.showMessage("Boss Time", () -> FXGL.getGameController());
             }
         }, Duration.seconds(1));
     }
