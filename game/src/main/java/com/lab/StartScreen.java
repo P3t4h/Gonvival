@@ -2,6 +2,7 @@ package com.lab;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -13,10 +14,12 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.AnchorPane;
 
 public class StartScreen extends FXGLMenu {
+    private Sound buttonClickSound;
 
     public StartScreen() {
         super(MenuType.MAIN_MENU);
-
+        buttonClickSound = FXGL.getAssetLoader().loadSound("button_click.mp3");
+        
         ImageView background = new ImageView(new Image("assets/textures/background.jpg"));
         background.setFitWidth(FXGL.getAppWidth());
         background.setFitHeight(FXGL.getAppHeight());
@@ -29,12 +32,19 @@ public class StartScreen extends FXGLMenu {
         title.setTranslateY(150);
 
         Button startButton = new Button("Start Game");
-        startButton.setOnAction(e -> fireNewGame());
+        startButton.setOnAction(e -> {
+            FXGL.getAudioPlayer().playSound(buttonClickSound);
+
+            fireNewGame();
+        });
         startButton.setPrefSize(250, 70);
         startButton.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
 
         Button exitButton = new Button("Exit");
-        exitButton.setOnAction(e -> FXGL.getGameController().exit());
+        exitButton.setOnAction(e -> {
+            FXGL.getAudioPlayer().playSound(buttonClickSound);
+            FXGL.getGameController().exit();
+        });
         exitButton.setPrefSize(250, 70);
         exitButton.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
 
@@ -46,5 +56,7 @@ public class StartScreen extends FXGLMenu {
         layout.getChildren().addAll(title, menuBox);
         getContentRoot().getChildren().add(background);
         getContentRoot().getChildren().add(layout);
+        FXGL.getSettings().setGlobalMusicVolume(1.0);
+        FXGL.getSettings().setGlobalSoundVolume(1.0);
     }
 }

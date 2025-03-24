@@ -43,6 +43,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 
 public class App extends GameApplication {
@@ -57,15 +58,15 @@ public class App extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(800);
-        settings.setTitle("Gonvival");
-        settings.setVersion("beta");
-        settings.setMainMenuEnabled(true);
-        settings.setSceneFactory(new SceneFactory() {
-            @Override
-            public FXGLMenu newMainMenu() {
-                return new StartScreen();
+    settings.setWidth(800);
+    settings.setHeight(800);
+    settings.setTitle("Gonvival");
+    settings.setVersion("beta");
+    settings.setMainMenuEnabled(true);
+    settings.setSceneFactory(new SceneFactory() {
+        @Override
+        public FXGLMenu newMainMenu() {
+            return new StartScreen();
         }
     });
 }
@@ -355,7 +356,7 @@ protected void initUI() {
     hpLabel.setFill(Color.RED);
     hpLabel.setFont(uiFont);
 
-    // ตัวเลข HP 
+    // เลข HP 
     Text hpText = new Text();
     hpText.setTranslateX(150);
     hpText.setTranslateY(25); 
@@ -377,7 +378,7 @@ protected void initUI() {
     expText.setFont(uiFont);
     expText.textProperty().bind(FXGL.getWorldProperties().intProperty("exp").asString());
 
-    // ป้าย Level และตัวเลข Level
+    // ป้ายกับเลข Level
     Text levelLabel = new Text("LVL :");
     levelLabel.setTranslateX(650);
     levelLabel.setTranslateY(140);
@@ -416,15 +417,15 @@ protected void initUI() {
     FXGL.getWorldProperties().intProperty("playerHP").divide(100.0).multiply(321)
     );
 
-        // เพิ่ม UI
-        FXGL.getGameScene().addUINode(hpLabel);
-        FXGL.getGameScene().addUINode(hpText);
-        FXGL.getGameScene().addUINode(expLabel);
-        FXGL.getGameScene().addUINode(expText);
-        FXGL.getGameScene().addUINode(levelLabel);
-        FXGL.getGameScene().addUINode(levelText);
-        FXGL.getGameScene().addUINode(pointsText);
-        FXGL.getGameScene().addUINode(healthBarBackground);
-        FXGL.getGameScene().addUINode(healthBar);
+    // เพิ่ม UI
+    FXGL.getGameScene().addUINode(hpLabel);
+    FXGL.getGameScene().addUINode(hpText);
+    FXGL.getGameScene().addUINode(expLabel);
+    FXGL.getGameScene().addUINode(expText);
+    FXGL.getGameScene().addUINode(levelLabel);
+    FXGL.getGameScene().addUINode(levelText);
+    FXGL.getGameScene().addUINode(pointsText);
+    FXGL.getGameScene().addUINode(healthBarBackground);
+    FXGL.getGameScene().addUINode(healthBar);
     }
 }
