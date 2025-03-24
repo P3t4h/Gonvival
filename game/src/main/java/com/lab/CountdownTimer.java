@@ -4,6 +4,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -13,10 +14,10 @@ public class CountdownTimer {
     private boolean isTimeUp = false;
 
     public CountdownTimer() {
-        timerText.setStyle("-fx-font-size: 36px; -fx-fill: white;");
-        timerText.textProperty().bind(timeLeft.asString("Time Left: %d"));
-        timerText.setTranslateX(50);
+        timerText.setTranslateX(FXGL.getAppWidth() / 2.0 - 75);
         timerText.setTranslateY(50);
+        timerText.setStyle("-fx-font-size: 36px; -fx-fill: YELLOW;");
+        timerText.textProperty().bind(timeLeft.asString("Time Left: %d"));
 
         FXGL.getGameScene().addUINode(timerText);
 
