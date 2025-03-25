@@ -15,6 +15,8 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
@@ -27,6 +29,8 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.PhysicsWorld;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
@@ -37,6 +41,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -77,7 +82,6 @@ public class App extends GameApplication {
         vars.put("playerHP", 100);
         vars.put("exp",0);
         vars.put("level", 1);
-        vars.put("points",0);
     }
 
     @Override
@@ -143,10 +147,6 @@ public class App extends GameApplication {
 
             checkLevelUp();
         }
-    }
-
-    public void onEnemyKilled() {
-        FXGL.inc("points", 10); // เพิ่ม10 แต้มเมื่อฆ่าศัตร฿ได้
     }
 
     public int getLevel(){
@@ -265,8 +265,6 @@ public class App extends GameApplication {
 
     Input input = FXGL.getInput();
     AnimationComponent anim = player.getComponentOptional(AnimationComponent.class).orElse(null);
-
-    // ตรวจสอบและเพิ่ม Action "SHOOT"
     if (!isShootActionBound) {
         input.addAction(new UserAction("SHOOT") {
             @Override
@@ -275,7 +273,7 @@ public class App extends GameApplication {
                 System.out.println("Player Shoots!");
             }
         }, MouseButton.PRIMARY);
-        isShootActionBound = true; // ตั้งค่าว่า Action "SHOOT" ถูกเพิ่มแล้ว
+        isShootActionBound = true;
     } else {
         System.out.println("Action 'SHOOT' already exists, skipping addAction.");
     }
@@ -332,7 +330,7 @@ public class App extends GameApplication {
         input.addAction(new UserAction("MOVE DOWN") {
             @Override
             protected void onAction() {
-                player.translateY(1); // เคลื่อนที่ลง
+                player.translateY(1);
                 if (anim != null) anim.setSpeed(0, 1);
             }
 
@@ -345,8 +343,8 @@ public class App extends GameApplication {
     }
 }
 
-@Override
-protected void initUI() {
+    @Override
+    protected void initUI() {
     Font uiFont = new Font("Arial", 24);
 
     // HP
@@ -392,16 +390,6 @@ protected void initUI() {
     levelText.setFont(uiFont);
     levelText.textProperty().bind(FXGL.getWorldProperties().intProperty("level").asString());
 
-    //Score
-    Text pointsText = new Text("Points: 0");
-    pointsText.setTranslateX(1000);
-    pointsText.setTranslateY(20);
-    pointsText.setFill(Color.DARKCYAN);
-    pointsText.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-    pointsText.textProperty().bind(FXGL.getWorldProperties().intProperty("points").asString());
-    FXGL.getWorldProperties().intProperty("points").asString()
-        .addListener((obs, oldVal, newVal) -> pointsText.setText("Points: " + newVal));
-
     // แถบเลือดพื้นหลัง
     Rectangle healthBarBackground = new Rectangle(321, 17);
     healthBarBackground.setTranslateX(34);
@@ -424,7 +412,6 @@ protected void initUI() {
     FXGL.getGameScene().addUINode(expText);
     FXGL.getGameScene().addUINode(levelLabel);
     FXGL.getGameScene().addUINode(levelText);
-    FXGL.getGameScene().addUINode(pointsText);
     FXGL.getGameScene().addUINode(healthBarBackground);
     FXGL.getGameScene().addUINode(healthBar);
     }
