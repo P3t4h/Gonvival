@@ -7,7 +7,7 @@ public class BackGround {
     
     public static Entity createBackground(){
         return FXGL.entityBuilder()
-                .view(FXGL.texture("map.png"))
+                .view(FXGL.texture("newmap2.png"))
                 .at(0, 0)
                 .build();
     }

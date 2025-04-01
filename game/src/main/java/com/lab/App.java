@@ -38,10 +38,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -49,6 +45,7 @@ import javafx.util.Duration;
 
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.audio.Music;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 
 public class App extends GameApplication {
@@ -106,25 +103,40 @@ public class App extends GameApplication {
 
         }, Duration.seconds(1));
 
-        new CountdownTimer();
+        new CountdownTimer(); //จับเวลา
 
-        FXGL.spawn("Wall",new SpawnData(0, 0).put("width",mapWidth).put("height", wallThickness));
-        FXGL.spawn("Wall",new SpawnData(0, mapHeight - wallThickness).put("width",mapWidth).put("height", wallThickness));
-        FXGL.spawn("Wall",new SpawnData(0, 0).put("width", wallThickness).put("height", mapHeight));
-        FXGL.spawn("Wall",new SpawnData(mapWidth - wallThickness, 0).put("width", wallThickness).put("height", mapHeight));
+        FXGL.spawn("Wall",new SpawnData(0, 0).put("width",mapWidth).put("height", wallThickness)); // กำหนด ตำแหน่ง/ความกว้าง/ความสูง ของ Wall บน
+        FXGL.spawn("Wall",new SpawnData(0, mapHeight - wallThickness).put("width",mapWidth).put("height", wallThickness)); // Wall ล่าง
+        FXGL.spawn("Wall",new SpawnData(0, 0).put("width", wallThickness).put("height", mapHeight)); // Wall ซ้าย
+        FXGL.spawn("Wall",new SpawnData(mapWidth - wallThickness, 0).put("width", wallThickness).put("height", mapHeight)); // Wall ขวา
+
+        FXGL.spawn("Spike",new SpawnData(112, 208).put("width", 112).put("height", 16)); // กำหนด ตำแหน่ง/ความกว้าง/ความสูง ของ Spike แนวนอน ฝั่งซ้ายบน
+        FXGL.spawn("Spike",new SpawnData(160, 160).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งซ้ายบน
+
+        FXGL.spawn("Spike",new SpawnData(112, 592).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งซ้ายล่าง
+        FXGL.spawn("Spike",new SpawnData(160, 544).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งซ้ายล่าง
+
+        FXGL.spawn("Spike",new SpawnData(578, 208).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งขวาบน
+        FXGL.spawn("Spike",new SpawnData(626, 160).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งขวาบน
+
+        FXGL.spawn("Spike",new SpawnData(112, 592).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งขวาล่าง
+        FXGL.spawn("Spike",new SpawnData(160, 544).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งขวาล่าง
+
+        FXGL.spawn("Spike",new SpawnData(368, 208).put("width", 80).put("height", 16)); // spike แนวนอน ตรงกลาง
 
         player = FXGL.entityBuilder()
-                .at(400, 400)
+                .at(394, 398)
                 .type(EntityType.PLAYER)
                 .with(new CollidableComponent(true))
                 .with(new AnimationComponent())
-                .bbox(new HitBox("Main",new Point2D(6, 16),BoundingShape.box(36, 32)))
+                .bbox(new HitBox("Player", new Point2D(12, 14), BoundingShape.box(32, 32)))
+                .anchorFromCenter()
                 .buildAndAttach();
         
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
-    private void checkLevelUp() {
+    private void checkLevelUp() {  // ระบบ Level
         int currentExp = FXGL.geti("exp");
         int currentLevel = FXGL.geti("level");
         int nextLevelExp = (int) (20 * Math.pow(currentLevel, 1.5));
@@ -153,7 +165,7 @@ public class App extends GameApplication {
         return FXGL.geti("level");
     }
     
-    public static Entity getPlayer() {
+    public static Entity getPlayer() { // Update ตำแหน่ง player
         return player;
     }
 
@@ -174,7 +186,7 @@ public class App extends GameApplication {
             }
         });
 
-        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.ENEMY, EntityType.PLAYER) {
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.ENEMY, EntityType.PLAYER) { // ลดเลือด Player เมือโดน Enemy และ Enemy หายไป
             @Override
             protected void onCollisionBegin(Entity enemy, Entity player) {
                 FXGL.inc("playerHP", -20);
@@ -190,43 +202,22 @@ public class App extends GameApplication {
             }
         });
 
-        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOSS) {
-            @Override
-            protected void onCollisionBegin(Entity player, Entity boss) {
-                int damageBoss = -10*getLevel();
-
-                FXGL.inc("playerHP", -(damageBoss));
-                System.out.println(damageBoss);
-
-                if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> { 
-                        FXGL.getGameWorld().reset();
-                        FXGL.getGameController().gotoMainMenu();
-                    });
-                }
-            }
-        });
-
-        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BOSS) {
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BOSS) { // ลบกระสุนโดน Boss และเพิ่ม EXP
             @Override
             protected void onCollisionBegin(Entity bullet, Entity boss) {
-                double knockbackStr = -2*getLevel();
-
-                boss.translateX(knockbackStr);
                 bullet.removeFromWorld();
-                
-                System.out.println(knockbackStr);
+                FXGL.getWorldProperties().increment("exp", 10);
             }
         });
 
-        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.WALL) {
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.WALL) { // ลบกระสุนโดนกำแพง
             @Override
             protected void onCollisionBegin(Entity bullet, Entity wall) {
                 bullet.removeFromWorld();
             }
         });
 
-        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) {
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) { // Player ตายเมือโดน Wall
             @Override
             protected void onCollisionBegin(Entity player, Entity wall) {
                 FXGL.inc("playerHP", -9999);
@@ -239,9 +230,31 @@ public class App extends GameApplication {
                 }
             }
         });
+
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.SPIKE) { // ลบกระสุนเมือโดนหนาม
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity spike) {
+                bullet.removeFromWorld();
+            }
+        });
+
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.SPIKE) { // Player ตายเมือโดนหนาม
+            @Override
+            protected void onCollisionBegin(Entity player, Entity spike) {
+                FXGL.inc("playerHP", -9999);
+
+                if (FXGL.geti("playerHP") <= 0) {
+                    FXGL.showMessage("Game Over", () -> { 
+                        FXGL.getGameWorld().reset();
+                        FXGL.getGameController().gotoMainMenu();
+                    });
+                }
+            }
+        });
+
     }
 
-    private void shootFollowArrow() {
+    private void shootFollowArrow() { // ยิงตามเมาส์
         Input input = FXGL.getInput();
         Point2D mousePos = new Point2D(input.getMouseXWorld(), input.getMouseYWorld());
 
@@ -265,12 +278,14 @@ public class App extends GameApplication {
 
     Input input = FXGL.getInput();
     AnimationComponent anim = player.getComponentOptional(AnimationComponent.class).orElse(null);
+    
     if (!isShootActionBound) {
-        input.addAction(new UserAction("SHOOT") {
+        input.addAction(new UserAction("SHOOT") { // ยิง
             @Override
             protected void onActionBegin() {
                 shootFollowArrow();
                 System.out.println("Player Shoots!");
+                
             }
         }, MouseButton.PRIMARY);
         isShootActionBound = true;
@@ -278,8 +293,8 @@ public class App extends GameApplication {
         System.out.println("Action 'SHOOT' already exists, skipping addAction.");
     }
 
-    if (!isMoveLeftActionBound) {
-        input.addAction(new UserAction("MOVE LEFT") {
+    if (!isMoveLeftActionBound) { // 
+        input.addAction(new UserAction("MOVE LEFT") { // เดินซ้าย
             @Override
             protected void onAction() {
                 player.translateX(-1);
@@ -295,7 +310,7 @@ public class App extends GameApplication {
     }
 
     if (!isMoveRightActionBound) {
-        input.addAction(new UserAction("MOVE RIGHT") {
+        input.addAction(new UserAction("MOVE RIGHT") { // เดินขวา
             @Override
             protected void onAction() {
                 player.translateX(1);
@@ -311,7 +326,7 @@ public class App extends GameApplication {
     }
 
     if (!isMoveUpActionBound) {
-        input.addAction(new UserAction("MOVE UP") {
+        input.addAction(new UserAction("MOVE UP") { // เดินบน
             @Override
             protected void onAction() {
                 player.translateY(-1);
@@ -327,7 +342,7 @@ public class App extends GameApplication {
     }
 
     if (!isMoveDownActionBound) {
-        input.addAction(new UserAction("MOVE DOWN") {
+        input.addAction(new UserAction("MOVE DOWN") { // เดินลง
             @Override
             protected void onAction() {
                 player.translateY(1);
