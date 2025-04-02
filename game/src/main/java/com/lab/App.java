@@ -53,7 +53,7 @@ public class App extends GameApplication {
         launch(args);
     }
 
-    private static Entity player;
+    private static Entity player,chek;
     private Rectangle healthBar;
     private Text healthText;
     private Text pointsText; 
@@ -119,8 +119,8 @@ public class App extends GameApplication {
         FXGL.spawn("Spike",new SpawnData(578, 208).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งขวาบน
         FXGL.spawn("Spike",new SpawnData(626, 160).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งขวาบน
 
-        FXGL.spawn("Spike",new SpawnData(112, 592).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งขวาล่าง
-        FXGL.spawn("Spike",new SpawnData(160, 544).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งขวาล่าง
+        FXGL.spawn("Spike",new SpawnData(578, 592).put("width", 112).put("height", 16)); // spike แนวนอน ฝั่งขวาล่าง
+        FXGL.spawn("Spike",new SpawnData(626, 544).put("width", 16).put("height", 112)); // spike แนวตั้ง ฝั่งขวาล่าง
 
         FXGL.spawn("Spike",new SpawnData(368, 208).put("width", 80).put("height", 16)); // spike แนวนอน ตรงกลาง
 

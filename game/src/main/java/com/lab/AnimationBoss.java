@@ -33,7 +33,7 @@ public class AnimationBoss extends Component{
 
     @Override
     public void onAdded(){
-        entity.getTransformComponent().setScaleOrigin(new Point2D(125, 125));
+        entity.getTransformComponent().setScaleOrigin(new Point2D(125, 250));
         entity.getViewComponent().addChild(texture);
         texture.loopAnimationChannel(idelBoss);
     }
@@ -51,9 +51,6 @@ public class AnimationBoss extends Component{
                 case "BossIdle":
                     changeAnimation(idelBoss);
                     break;
-                case "CastSpeel":
-                    changeAnimation(castSpeel);
-                    break;
             }
             return;
         }
@@ -61,9 +58,6 @@ public class AnimationBoss extends Component{
         if (speedX > 0 && speedY < 0) { //เดินเฉียงขึ้นขวา
             changeAnimation(idelBoss);
             lastDirection = "BossIdle";
-        } else if (speedX < 0 && speedY < 0) { //เดินเฉียงขึ้นซ้าย
-            changeAnimation(castSpeel);
-            lastDirection = "CastSpell"; 
         }
     }
 }

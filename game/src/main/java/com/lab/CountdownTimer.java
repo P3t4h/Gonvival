@@ -24,7 +24,6 @@ public class CountdownTimer {
                 timeLeft.set(timeLeft.get() - 1);
             } else if (!isTimeUp) {
                 isTimeUp = true;
-                FXGL.getGameWorld().spawn("Boss",100,400);
                 FXGL.showMessage("Boss Time", () -> FXGL.getGameController());
             }
         }, Duration.seconds(1));
