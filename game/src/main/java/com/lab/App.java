@@ -124,11 +124,11 @@ public class App extends GameApplication {
         FXGL.spawn("Spike",new SpawnData(368, 208).put("width", 80).put("height", 16)); // spike แนวนอน ตรงกลาง
 
         player = FXGL.entityBuilder()
-                .at(394, 398)
+                .at(400, 550)
                 .type(EntityType.PLAYER)
                 .with(new CollidableComponent(true))
                 .with(new AnimationComponent())
-                .bbox(new HitBox("Player", new Point2D(12, 14), BoundingShape.box(32, 32)))
+                .bbox(new HitBox("Player", new Point2D(12, 14), BoundingShape.box(14, 24)))
                 .anchorFromCenter()
                 .buildAndAttach();
         
