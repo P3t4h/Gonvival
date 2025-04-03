@@ -51,11 +51,7 @@ public class App extends GameApplication {
         launch(args);
     }
 
-    private static Entity player,chek;
-    private PointUI pointUI;
-    private Text healthText;
-    private Text pointsText; 
-    private Text totalPointText;
+    private static Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -86,8 +82,6 @@ public class App extends GameApplication {
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new UnitFactory());
         FXGL.getGameWorld().addEntities(BackGround.createBackground());
-        pointUI = new PointUI();
-        pointUI.addToScene();
 
         int mapWidth = 800;
         int mapHeight = 800;
