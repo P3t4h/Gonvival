@@ -52,6 +52,7 @@ public class App extends GameApplication {
     }
 
     private static Entity player,chek;
+    private PointUI pointUI;
     private Text healthText;
     private Text pointsText; 
     private Text totalPointText;
@@ -78,12 +79,15 @@ public class App extends GameApplication {
         vars.put("exp",0);
         vars.put("point",0);
         vars.put("level", 1);
+        vars.put("highScore",0);
     }
 
     @Override
     protected void initGame() {
         FXGL.getGameWorld().addEntityFactory(new UnitFactory());
         FXGL.getGameWorld().addEntities(BackGround.createBackground());
+        pointUI = new PointUI();
+        pointUI.addToScene();
 
         int mapWidth = 800;
         int mapHeight = 800;
@@ -257,7 +261,6 @@ public class App extends GameApplication {
                 }
             }
         });
-
     }
 
     private void shootFollowArrow() { // ยิงตามเมาส์
@@ -368,35 +371,19 @@ public class App extends GameApplication {
     protected void initUI() {
     Font uiFont = new Font("Arial", 24);
 
-    
-    Rectangle pointBackground = new Rectangle(120, 40);
-    pointBackground.setTranslateX(640);
-    pointBackground.setTranslateY(30);
-    pointBackground.setFill(Color.WHITE);
-    pointBackground.setStroke(Color.BLACK);
-    pointBackground.setStrokeWidth(2);
-
-    //Point label
-    Text pointLabel = new Text("PT :");
-    pointLabel.setTranslateX(650);
-    pointLabel.setTranslateY(60);
-    pointLabel.setFill(Color.BLUE);
-    pointLabel.setFont(uiFont);
-
-    //เลข point
-    Text pointText = new Text();
-    pointText.setTranslateX(700); 
-    pointText.setTranslateY(60); 
-    pointText.setFill(Color.BLUE);
-    pointText.setFont(uiFont);
-    pointText.textProperty().bind(FXGL.getWorldProperties().intProperty("point").asString());
-
     Rectangle levelBackground = new Rectangle(120, 40); // กล่อง LVL
     levelBackground.setTranslateX(640);
     levelBackground.setTranslateY(105);
     levelBackground.setFill(Color.WHITE);
     levelBackground.setStroke(Color.BLACK);
     levelBackground.setStrokeWidth(2);
+
+    Rectangle background = new Rectangle(400, 200);
+    background.setTranslateX(200); // ตำแหน่ง X
+    background.setTranslateY(150); // ตำแหน่ง Y
+    background.setFill(Color.LIGHTGRAY);
+    background.setStroke(Color.BLACK);
+    background.setStrokeWidth(2);
 
     // Lv Label
     Text levelLabel = new Text("Lv :");
@@ -439,9 +426,6 @@ public class App extends GameApplication {
     FXGL.getGameScene().addUINode(hpBackground);
     FXGL.getGameScene().addUINode(hpLabel);
     FXGL.getGameScene().addUINode(hpText);
-    FXGL.getGameScene().addUINode(pointBackground);
-    FXGL.getGameScene().addUINode(pointLabel);
-    FXGL.getGameScene().addUINode(pointText);
     FXGL.getGameScene().addUINode(levelBackground);
     FXGL.getGameScene().addUINode(levelLabel);
     FXGL.getGameScene().addUINode(levelText);
