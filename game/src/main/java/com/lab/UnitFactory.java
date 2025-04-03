@@ -40,10 +40,10 @@ public class UnitFactory implements EntityFactory{
     public Entity boss(SpawnData data) {
         return entityBuilder()
                 .type(EntityType.BOSS)
-                .bbox(new HitBox("Boss", new Point2D(125, 125), BoundingShape.box(36, 64)))
+                .bbox(new HitBox("Boss", new Point2D(125, 122), BoundingShape.box(37, 53)))
                 .view(new Rectangle(36,64,Color.RED))
                 .anchorFromCenter()
-                .with(new CollidableComponent(true),new AnimationBoss())
+                .with(new CollidableComponent(true),new AnimationBoss(),new BossControl())
                 .buildAndAttach();
     }
 

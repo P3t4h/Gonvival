@@ -48,8 +48,6 @@ public class AnimationComponent extends Component{
     @Override
     public void onAdded(){
         entity.getTransformComponent().setScaleOrigin(new Point2D(24, 32));
-        entity.getTransformComponent().setScaleX(1.5);
-        entity.getTransformComponent().setScaleY(1.5);
         entity.getViewComponent().addChild(texture);
         texture.loopAnimationChannel(animIdleD);
     }
