@@ -7,7 +7,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class CountdownTimer {
-    private IntegerProperty timeLeft = new SimpleIntegerProperty(1);
+    private IntegerProperty timeLeft = new SimpleIntegerProperty(120); //กำหนดเวลาเริ่มต้นเป็น 120 วินาที
     private Text timerText = new Text();
     private boolean isTimeUp = false;
 
@@ -24,7 +24,10 @@ public class CountdownTimer {
                 timeLeft.set(timeLeft.get() - 1);
             } else if (!isTimeUp) {
                 isTimeUp = true;
-                FXGL.showMessage("Boss Time", () -> FXGL.getGameController());
+                if(isTimeUp==true){
+                    FXGL.showMessage("Boss Time", () -> FXGL.getGameController());
+                    FXGL.spawn("Boss");
+                }
             }
         }, Duration.seconds(1));
     }

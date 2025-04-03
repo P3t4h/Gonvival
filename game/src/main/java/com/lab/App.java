@@ -89,6 +89,9 @@ public class App extends GameApplication {
         int mapHeight = 800;
         int wallThickness = 25;
 
+        levelUI = new LevelUI(); // กำหนดค่าเริ่มต้นของ UI
+        levelUI.addToScene(); // เพิ่ม UI เข้าไปในเกม
+
         FXGL.run(() -> {
 
             int numEnemy = FXGL.getWorldProperties().getInt("enemies");
@@ -140,28 +143,33 @@ public class App extends GameApplication {
         FXGL.set("point", currentPoint + amount); // เพิ่มคะแนน Point
     }
 
+    private LevelUI levelUI;
+
     private void checkLevelUp() {  // ระบบ Level
         int currentExp = FXGL.geti("exp");
         int currentLevel = FXGL.geti("level");
         int nextLevelExp = (int) (20 * Math.pow(currentLevel, 1.5));
-    
-        if (currentExp >= nextLevelExp) {
-            FXGL.getWorldProperties().increment("level", 1);
-            FXGL.getWorldProperties().setValue("exp", currentExp - nextLevelExp);
-            int newLevel = FXGL.geti("level");
-            int hpIncrease = (int) (newLevel * 4);
-            FXGL.inc("playerHP", hpIncrease);
-    
-            if (newLevel % 2 == 0) {
-                FXGL.run(() -> {
-                    FXGL.getGameWorld().spawn("Enemy",
-                            FXGLMath.random(0, FXGL.getAppWidth()),
-                            FXGLMath.random(0, FXGL.getAppHeight() / 2));
-                    FXGL.getWorldProperties().increment("enemies", 1);
-                }, Duration.seconds(0.8));
-            }
 
-            checkLevelUp();
+        if (currentExp >= nextLevelExp) {
+        FXGL.getWorldProperties().increment("level", 1);
+        FXGL.getWorldProperties().setValue("exp", currentExp - nextLevelExp);
+        int newLevel = FXGL.geti("level");
+        int hpIncrease = (int) (newLevel * 4);
+        FXGL.inc("playerHP", hpIncrease);
+
+        if (newLevel % 2 == 0) {
+            FXGL.run(() -> {
+                FXGL.getGameWorld().spawn("Enemy",
+                        FXGLMath.random(0, FXGL.getAppWidth()),
+                        FXGLMath.random(0, FXGL.getAppHeight() / 2));
+                FXGL.getWorldProperties().increment("enemies", 1);
+            }, Duration.seconds(0.8));
+        }
+
+        levelUI.updateLevelCount(newLevel); // อัปเดต UI ของ Level
+        levelUI.checkAndUpdateHighLevel(); // ตรวจสอบและอัปเดต High Level
+
+        checkLevelUp();
         }
     }
 
@@ -208,11 +216,26 @@ public class App extends GameApplication {
             }
         });
 
+        physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BOSS, EntityType.PLAYER) { // Player ตายเมือโดน Boss
+            @Override
+            protected void onCollisionBegin(Entity boss, Entity player) {
+                FXGL.inc("playerHP", -9999);
+
+                if (FXGL.geti("playerHP") <= 0) {
+                    FXGL.showMessage("Game Over\nHighest Level:" , () -> { 
+                        FXGL.getGameWorld().reset();
+                        FXGL.getGameController().gotoMainMenu();
+                    });
+                }
+            }
+        });
+
         physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.BOSS) { // ลบกระสุนโดน Boss และเพิ่ม EXP
             @Override
             protected void onCollisionBegin(Entity bullet, Entity boss) {
                 bullet.removeFromWorld();
                 FXGL.getWorldProperties().increment("exp", 10);
+                FXGL.getWorldProperties().increment("point", 10);
             }
         });
 
