@@ -44,8 +44,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.almasb.fxgl.app.scene.SceneFactory;
-import com.almasb.fxgl.audio.Music;
-import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 
 public class App extends GameApplication {
@@ -54,9 +52,9 @@ public class App extends GameApplication {
     }
 
     private static Entity player,chek;
-    private Rectangle healthBar;
     private Text healthText;
     private Text pointsText; 
+    private Text totalPointText;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -78,6 +76,7 @@ public class App extends GameApplication {
         vars.put("enemies", 0);
         vars.put("playerHP", 100);
         vars.put("exp",0);
+        vars.put("point",0);
         vars.put("level", 1);
     }
 
@@ -136,6 +135,11 @@ public class App extends GameApplication {
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
+    private void increasePoint(int amount) {
+        int currentPoint = FXGL.geti("point");
+        FXGL.set("point", currentPoint + amount); // เพิ่มคะแนน Point
+    }
+
     private void checkLevelUp() {  // ระบบ Level
         int currentExp = FXGL.geti("exp");
         int currentLevel = FXGL.geti("level");
@@ -176,11 +180,13 @@ public class App extends GameApplication {
         physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.ENEMY) { // ลบศัตรูเมือกระสุนโดนศัตรู
             @Override
             protected void onCollisionBegin(Entity bullet, Entity enemy) {
+                increasePoint(10);
                 bullet.removeFromWorld();
                 enemy.removeFromWorld();
 
                 FXGL.getWorldProperties().increment("enemies", -1);
                 FXGL.getWorldProperties().increment("exp", 8);
+                FXGL.getWorldProperties().increment("point", 10);
 
                 checkLevelUp();
             }
@@ -260,7 +266,7 @@ public class App extends GameApplication {
 
         Point2D direction = mousePos.subtract(player.getPosition()).normalize();
 
-        Entity bullet = FXGL.getGameWorld().spawn("Bullet", player.getX(), player.getY());
+        Entity bullet = FXGL.getGameWorld().spawn("Bullet", player.getX() + player.getWidth() / 2, player.getY() + player.getHeight() / 2);
         bullet.addComponent(new ProjectileComponent(direction, 500));
     }
 
@@ -362,72 +368,82 @@ public class App extends GameApplication {
     protected void initUI() {
     Font uiFont = new Font("Arial", 24);
 
-    // HP
-    Text hpLabel = new Text("HP :");
-    hpLabel.setTranslateX(100); 
-    hpLabel.setTranslateY(25); 
-    hpLabel.setFill(Color.RED);
-    hpLabel.setFont(uiFont);
+    
+    Rectangle pointBackground = new Rectangle(120, 40);
+    pointBackground.setTranslateX(640);
+    pointBackground.setTranslateY(30);
+    pointBackground.setFill(Color.WHITE);
+    pointBackground.setStroke(Color.BLACK);
+    pointBackground.setStrokeWidth(2);
 
-    // เลข HP 
-    Text hpText = new Text();
-    hpText.setTranslateX(150);
-    hpText.setTranslateY(25); 
-    hpText.setFill(Color.RED);
-    hpText.setFont(uiFont);
-    hpText.textProperty().bind(FXGL.getWorldProperties().intProperty("playerHP").asString());
+    //Point label
+    Text pointLabel = new Text("PT :");
+    pointLabel.setTranslateX(650);
+    pointLabel.setTranslateY(60);
+    pointLabel.setFill(Color.BLUE);
+    pointLabel.setFont(uiFont);
 
-    // ป้าย EXP
-    Text expLabel = new Text("EXP :");
-    expLabel.setTranslateX(650);
-    expLabel.setTranslateY(80);
-    expLabel.setFill(Color.PURPLE);
-    expLabel.setFont(uiFont);
+    //เลข point
+    Text pointText = new Text();
+    pointText.setTranslateX(700); 
+    pointText.setTranslateY(60); 
+    pointText.setFill(Color.BLUE);
+    pointText.setFont(uiFont);
+    pointText.textProperty().bind(FXGL.getWorldProperties().intProperty("point").asString());
 
-    Text expText = new Text();
-    expText.setTranslateX(720); 
-    expText.setTranslateY(80); 
-    expText.setFill(Color.PURPLE);
-    expText.setFont(uiFont);
-    expText.textProperty().bind(FXGL.getWorldProperties().intProperty("exp").asString());
+    Rectangle levelBackground = new Rectangle(120, 40); // กล่อง LVL
+    levelBackground.setTranslateX(640);
+    levelBackground.setTranslateY(105);
+    levelBackground.setFill(Color.WHITE);
+    levelBackground.setStroke(Color.BLACK);
+    levelBackground.setStrokeWidth(2);
 
-    // ป้ายกับเลข Level
-    Text levelLabel = new Text("LVL :");
+    // Lv Label
+    Text levelLabel = new Text("Lv :");
     levelLabel.setTranslateX(650);
-    levelLabel.setTranslateY(140);
+    levelLabel.setTranslateY(130);
     levelLabel.setFill(Color.GOLD);
     levelLabel.setFont(uiFont);
 
+    // เลข Level
     Text levelText = new Text();
-    levelText.setTranslateX(720); 
-    levelText.setTranslateY(140); 
+    levelText.setTranslateX(700);
+    levelText.setTranslateY(130);
     levelText.setFill(Color.GOLD);
     levelText.setFont(uiFont);
     levelText.textProperty().bind(FXGL.getWorldProperties().intProperty("level").asString());
 
-    // แถบเลือดพื้นหลัง
-    Rectangle healthBarBackground = new Rectangle(321, 17);
-    healthBarBackground.setTranslateX(34);
-    healthBarBackground.setTranslateY(50);
-    healthBarBackground.setFill(Color.GRAY);
+    Rectangle hpBackground = new Rectangle(120, 40);
+    hpBackground.setTranslateX(640);
+    hpBackground.setTranslateY(65);
+    hpBackground.setFill(Color.WHITE);
+    hpBackground.setStroke(Color.BLACK);
+    hpBackground.setStrokeWidth(2);
 
-    // Health Bar
-    Rectangle healthBar = new Rectangle(321, 17);
-    healthBar.setTranslateX(34);
-    healthBar.setTranslateY(50);
-    healthBar.setFill(Color.RED);
-    healthBar.widthProperty().bind(
-    FXGL.getWorldProperties().intProperty("playerHP").divide(100.0).multiply(321)
-    );
+    // HP Label
+    Text hpLabel = new Text("HP :");
+    hpLabel.setTranslateX(650); 
+    hpLabel.setTranslateY(90); 
+    hpLabel.setFill(Color.RED);
+    hpLabel.setFont(uiFont);
 
-    // เพิ่ม UI
+    // เลข HP
+    Text hpText = new Text();
+    hpText.setTranslateX(700);
+    hpText.setTranslateY(90); 
+    hpText.setFill(Color.RED);
+    hpText.setFont(uiFont);
+    hpText.textProperty().bind(FXGL.getWorldProperties().intProperty("playerHP").asString());
+
+    //เพิ่ม UI
+    FXGL.getGameScene().addUINode(hpBackground);
     FXGL.getGameScene().addUINode(hpLabel);
     FXGL.getGameScene().addUINode(hpText);
-    FXGL.getGameScene().addUINode(expLabel);
-    FXGL.getGameScene().addUINode(expText);
+    FXGL.getGameScene().addUINode(pointBackground);
+    FXGL.getGameScene().addUINode(pointLabel);
+    FXGL.getGameScene().addUINode(pointText);
+    FXGL.getGameScene().addUINode(levelBackground);
     FXGL.getGameScene().addUINode(levelLabel);
     FXGL.getGameScene().addUINode(levelText);
-    FXGL.getGameScene().addUINode(healthBarBackground);
-    FXGL.getGameScene().addUINode(healthBar);
     }
 }

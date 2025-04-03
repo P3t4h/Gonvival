@@ -2,7 +2,6 @@ package com.lab;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
-import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -14,11 +13,8 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.AnchorPane;
 
 public class StartScreen extends FXGLMenu {
-    private Sound buttonClickSound;
-
     public StartScreen() {
         super(MenuType.MAIN_MENU);
-        buttonClickSound = FXGL.getAssetLoader().loadSound("button_click.mp3");
         
         ImageView background = new ImageView(new Image("assets/textures/background.jpg"));
         background.setFitWidth(FXGL.getAppWidth());
@@ -33,8 +29,6 @@ public class StartScreen extends FXGLMenu {
 
         Button startButton = new Button("Start Game");
         startButton.setOnAction(e -> {
-            FXGL.getAudioPlayer().playSound(buttonClickSound);
-
             fireNewGame();
         });
         startButton.setPrefSize(250, 70);
@@ -42,7 +36,6 @@ public class StartScreen extends FXGLMenu {
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> {
-            FXGL.getAudioPlayer().playSound(buttonClickSound);
             FXGL.getGameController().exit();
         });
         exitButton.setPrefSize(250, 70);
