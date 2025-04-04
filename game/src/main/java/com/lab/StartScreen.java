@@ -28,11 +28,14 @@ public class StartScreen extends FXGLMenu {
         title.setTranslateY(150);
 
         Button startButton = new Button("Start Game");
-        startButton.setOnAction(e -> {
-            fireNewGame();
-        });
         startButton.setPrefSize(250, 70);
         startButton.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
+        startButton.setOnAction(e -> {
+            GuideScreen guideScreen = new GuideScreen();
+            FXGL.getGameController().pauseEngine();
+            FXGL.getGameScene().getContentRoot().getChildren().add(guideScreen);
+            fireNewGame();
+        });
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> {

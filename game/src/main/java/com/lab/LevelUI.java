@@ -66,8 +66,7 @@ public class LevelUI {
             HighLevelandScoreManager.writeHighLevel(highLevel); // บันทึก high level ใหม่ลงในไฟล์
         }
     }
-
-    public int getHighScore() {
-        return highLevel;
+    public int getHighLevel() {
+    return highLevel;
     }
 }

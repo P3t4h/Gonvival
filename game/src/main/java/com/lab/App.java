@@ -87,9 +87,6 @@ public class App extends GameApplication {
         int mapHeight = 800;
         int wallThickness = 25;
 
-        levelUI = new LevelUI(); // กำหนดค่าเริ่มต้นของ UI
-        levelUI.addToScene(); // เพิ่ม UI เข้าไปในเกม
-
         FXGL.run(() -> {
 
             int numEnemy = FXGL.getWorldProperties().getInt("enemies");
@@ -179,6 +176,10 @@ public class App extends GameApplication {
         return player;
     }
 
+    private String getGameOverMessage() {
+        return "Game Over!\n\n   You Level: " + levelUI.getLevelCount() + "\n\n   Highest Level:" + levelUI.getHighLevel();
+    }
+
     @Override
     protected void initPhysics() {
         PhysicsWorld physicsworld = FXGL.getPhysicsWorld();
@@ -206,7 +207,7 @@ public class App extends GameApplication {
 
                 FXGL.getWorldProperties().increment("enemies", -1);
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> { 
+                    FXGL.showMessage(getGameOverMessage(), () -> { 
                         FXGL.getGameWorld().reset();
                         FXGL.getGameController().gotoMainMenu();
                     });
@@ -220,7 +221,7 @@ public class App extends GameApplication {
                 FXGL.inc("playerHP", -9999);
 
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over\nHighest Level:" , () -> { 
+                    FXGL.showMessage(getGameOverMessage() , () -> { 
                         FXGL.getGameWorld().reset();
                         FXGL.getGameController().gotoMainMenu();
                     });
@@ -250,7 +251,7 @@ public class App extends GameApplication {
                 FXGL.inc("playerHP", -9999);
 
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> { 
+                    FXGL.showMessage(getGameOverMessage(), () -> { 
                         FXGL.getGameWorld().reset();
                         FXGL.getGameController().gotoMainMenu();
                     });
@@ -271,8 +272,7 @@ public class App extends GameApplication {
                 FXGL.inc("playerHP", -9999);
 
                 if (FXGL.geti("playerHP") <= 0) {
-                    FXGL.showMessage("Game Over", () -> { 
-                        FXGL.getGameWorld().reset();
+                    FXGL.showMessage(getGameOverMessage(), () -> { 
                         FXGL.getGameController().gotoMainMenu();
                     });
                 }
@@ -387,6 +387,8 @@ public class App extends GameApplication {
     @Override
     protected void initUI() {
     Font uiFont = new Font("Arial", 24);
+    levelUI = new LevelUI(); // กำหนดค่าเริ่มต้นของ UI
+        levelUI.addToScene(); // เพิ่ม UI เข้าไปในเกม
 
     Rectangle levelBackground = new Rectangle(120, 40); // กล่อง LVL
     levelBackground.setTranslateX(640);
