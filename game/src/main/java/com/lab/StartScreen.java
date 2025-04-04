@@ -16,19 +16,19 @@ public class StartScreen extends FXGLMenu {
     public StartScreen() {
         super(MenuType.MAIN_MENU);
         
-        ImageView background = new ImageView(new Image("assets/textures/background.jpg"));
+        ImageView background = new ImageView(new Image("assets/textures/background.png"));
         background.setFitWidth(FXGL.getAppWidth());
         background.setFitHeight(FXGL.getAppHeight());
         background.setPreserveRatio(false);
 
         Text title = new Text("Gonvival!");
-        title.setFill(Color.DARKBLUE);
+        title.setFill(Color.WHITE);
         title.setFont(Font.font("Verdana", 100));
         title.setTranslateX(100);
         title.setTranslateY(150);
 
         Button startButton = new Button("Start Game");
-        startButton.setPrefSize(250, 70);
+        startButton.setPrefSize(200, 70);
         startButton.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
         startButton.setOnAction(e -> {
             GuideScreen guideScreen = new GuideScreen();
@@ -41,7 +41,7 @@ public class StartScreen extends FXGLMenu {
         exitButton.setOnAction(e -> {
             FXGL.getGameController().exit();
         });
-        exitButton.setPrefSize(250, 70);
+        exitButton.setPrefSize(200, 70);
         exitButton.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
 
         VBox menuBox = new VBox(15, startButton, exitButton);

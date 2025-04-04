@@ -26,11 +26,13 @@ public class GuideScreen extends VBox {
         guideTitle.setFill(Color.DARKBLUE);
 
         Text guideContent = new Text(
-            "1. Use arrow keys to move.\n" +
-            "2. Collect points much as you can.\n" +
-            "3. Survive the monster.\n" +
-            "4. Don't get near the wall and spike!"
+            "1. Use W,A,S,D to move.\n" +
+            "2. LeftClick to Shoot.\n" +
+            "3. Collect points much as you can.\n" +
+            "4. Survive the monster.\n" +
+            "5. Don't get near the wall and spike!"
         );
+
         guideContent.setFont(Font.font("Verdana", 20));
         guideContent.setFill(Color.BLACK);
 

@@ -1,22 +1,11 @@
 package com.lab;
 
-import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getFileSystemService;
-import static com.almasb.fxgl.dsl.FXGL.getGameController;
-import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.getInput;
-import static com.almasb.fxgl.dsl.FXGL.geti;
-import static com.almasb.fxgl.dsl.FXGL.onBtnDown;
-import static com.almasb.fxgl.dsl.FXGL.spawn;
-
 import java.util.Map;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
-import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
@@ -26,17 +15,11 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.PhysicsWorld;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -73,7 +56,6 @@ public class App extends GameApplication {
         vars.put("enemies", 0);
         vars.put("playerHP", 100);
         vars.put("exp",0);
-        vars.put("point",0);
         vars.put("level", 1);
         vars.put("highScore",0);
     }
@@ -133,11 +115,6 @@ public class App extends GameApplication {
         FXGL.runOnce(() -> initInput(), Duration.seconds(0.1));
     }
 
-    private void increasePoint(int amount) {
-        int currentPoint = FXGL.geti("point");
-        FXGL.set("point", currentPoint + amount); // เพิ่มคะแนน Point
-    }
-
     private LevelUI levelUI;
 
     private void checkLevelUp() {  // ระบบ Level
@@ -187,13 +164,11 @@ public class App extends GameApplication {
         physicsworld.addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.ENEMY) { // ลบศัตรูเมือกระสุนโดนศัตรู
             @Override
             protected void onCollisionBegin(Entity bullet, Entity enemy) {
-                increasePoint(10);
                 bullet.removeFromWorld();
                 enemy.removeFromWorld();
 
                 FXGL.getWorldProperties().increment("enemies", -1);
                 FXGL.getWorldProperties().increment("exp", 8);
-                FXGL.getWorldProperties().increment("point", 10);
 
                 checkLevelUp();
             }
@@ -234,7 +209,6 @@ public class App extends GameApplication {
             protected void onCollisionBegin(Entity bullet, Entity boss) {
                 bullet.removeFromWorld();
                 FXGL.getWorldProperties().increment("exp", 10);
-                FXGL.getWorldProperties().increment("point", 10);
             }
         });
 
@@ -382,6 +356,7 @@ public class App extends GameApplication {
         }, KeyCode.S);
         isMoveDownActionBound = true;
     }
+    
 }
 
     @Override
@@ -449,4 +424,5 @@ public class App extends GameApplication {
     FXGL.getGameScene().addUINode(levelLabel);
     FXGL.getGameScene().addUINode(levelText);
     }
+
 }
