@@ -49,7 +49,8 @@ public class App extends GameApplication {
             return new StartScreen();
         }
     });
-}
+
+    }
     
     @Override
     protected void initGameVars(Map<String, Object> vars) {
@@ -285,7 +286,7 @@ public class App extends GameApplication {
             protected void onActionBegin() {
                 shootFollowArrow();
                 System.out.println("Player Shoots!");
-                
+                FXGL.getAudioPlayer().playSound(FXGL.getAssetLoader().loadSound("piw.mp3"));
             }
         }, MouseButton.PRIMARY);
         isShootActionBound = true;

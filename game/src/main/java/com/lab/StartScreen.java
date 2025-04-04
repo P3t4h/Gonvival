@@ -13,6 +13,7 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.AnchorPane;
 
 public class StartScreen extends FXGLMenu {
+    
     public StartScreen() {
         super(MenuType.MAIN_MENU);
         
@@ -54,5 +55,7 @@ public class StartScreen extends FXGLMenu {
         getContentRoot().getChildren().add(layout);
         FXGL.getSettings().setGlobalMusicVolume(1.0);
         FXGL.getSettings().setGlobalSoundVolume(1.0);
+
     }
+
 }
